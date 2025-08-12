@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Vulnerability Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-shield-alt"></i> AI Vulnerability Scanner</h1>
+            <p>Detect security vulnerabilities with AI-powered analysis</p>
+        </header>
+        
+        <main>
+            <div class="scanner-card">
+                <h2>Start New Scan</h2>
+                <form id="scan-form">
+                    <div class="form-group">
+                        <label for="url">Target URL</label>
+                        <input type="url" id="url" name="url" placeholder="https://example.com" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Scan for Vulnerabilities
+                    </button>
+                </form>
+                
+                <div id="loading" class="loading hidden">
+                    <i class="fas fa-spinner fa-spin"></i> Scanning...
+                </div>
+                
+                <div id="results" class="results hidden">
+                    <h3>Scan Results</h3>
+                    <div id="ai-summary" class="ai-summary"></div>
+                    <div id="vulnerabilities" class="vulnerabilities"></div>
+                    <a id="view-report" class="btn btn-secondary">View Full Report</a>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h2>What We Scan For</h2>
+                <div class="vuln-types">
+                    <div class="vuln-type">
+                        <i class="fas fa-database"></i>
+                        <h3>SQL Injection</h3>
+                        <p>Detects vulnerabilities that allow attackers to interfere with database queries</p>
+                    </div>
+                    <div class="vuln-type">
+                        <i class="fas fa-code"></i>
+                        <h3>Cross-Site Scripting (XSS)</h3>
+                        <p>Identifies flaws that enable attackers to inject malicious scripts</p>
+                    </div>
+                    <div class="vuln-type">
+                        <i class="fas fa-user-secret"></i>
+                        <h3>CSRF Vulnerabilities</h3>
+                        <p>Finds issues that allow unauthorized commands to be transmitted</p>
+                    </div>
+                    <div class="vuln-type">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>Directory Traversal</h3>
+                        <p>Detects access to files and directories outside the web root</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Credits: Neeraj Patil</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

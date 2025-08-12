@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Report - AI Vulnerability Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-shield-alt"></i> Vulnerability Scan Report</h1>
+            <p>Detailed analysis of security issues found</p>
+        </header>
+        
+        <main>
+            <div class="report-header">
+                <div class="report-meta">
+                    <h2>Scan Details</h2>
+                    <p><strong>Target URL:</strong> {{ scan.url }}</p>
+                    <p><strong>Scan Date:</strong> {{ scan.timestamp }}</p>
+                    <p><strong>Scan ID:</strong> {{ scan.id }}</p>
+                </div>
+                
+                <div class="report-summary">
+                    <h2>Summary</h2>
+                    <div class="summary-stats">
+                        <div class="stat high">
+                            <span class="number">{{ results|selectattr('severity', 'equalto', 'High')|list|length }}</span>
+                            <span class="label">High Risk</span>
+                        </div>
+                        <div class="stat medium">
+                            <span class="number">{{ results|selectattr('severity', 'equalto', 'Medium')|list|length }}</span>
+                            <span class="label">Medium Risk</span>
+                        </div>
+                        <div class="stat low">
+                            <span class="number">{{ results|selectattr('severity', 'equalto', 'Low')|list|length }}</span>
+                            <span class="label">Low Risk</span>
+                        </div>
+                        <div class="stat total">
+                            <span class="number">{{ results|length }}</span>
+                            <span class="label">Total Issues</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if ai_analysis %}
+            <div class="ai-analysis">
+                <h2><i class="fas fa-brain"></i> AI Analysis Summary</h2>
+                <div class="ai-card">
+                    <div class="ai-result">
+                        <span class="ai-label">Overall Risk:</span>
+                        <span class="ai-value {{ ai_analysis.risk_level }}">{{ ai_analysis.risk_level.title() }}</span>
+                    </div>
+                    <div class="ai-result">
+                        <span class="ai-label">Confidence:</span>
+                        <span class="ai-value">{{ "%.1f"|format(ai_analysis.confidence * 100) }}%</span>
+                    </div>
+                    <div class="ai-description">
+                        <p>AI analysis indicates this target has {{ "potential" if ai_analysis.is_vulnerable else "no obvious" }} security vulnerabilities based on pattern recognition.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="vulnerability-list">
+                <h2>Detected Vulnerabilities</h2>
+                {% if results %}
+                    {% for vuln in results %}
+                    <div class="vuln-card {{ vuln.severity.lower() }}">
+                        <div class="vuln-header">
+                            <h3>{{ vuln.type }}</h3>
+                            <span class="severity {{ vuln.severity.lower() }}">{{ vuln.severity }}</span>
+                        </div>
+                        <div class="vuln-details">
+                            <p><strong>Description:</strong> {{ vuln.description }}</p>
+                            <p><strong>Affected URL:</strong> <a href="{{ vuln.url }}" target="_blank">{{ vuln.url }}</a></p>
+                            <p><strong>Evidence:</strong> {{ vuln.evidence }}</p>
+                        </div>
+                        <div class="vuln-recommendation">
+                            <h4>Recommendation</h4>
+                            {% if vuln.type == 'SQL Injection' %}
+                                <p>Use prepared statements with parameterized queries. Implement input validation and output encoding.</p>
+                            {% elif vuln.type == 'Cross-Site Scripting (XSS)' %}
+                                <p>Implement context-sensitive output encoding. Use Content Security Policy (CSP) headers.</p>
+                            {% elif vuln.type == 'Missing Security Header' %}
+                                <p>Add the missing security header to your server configuration.</p>
+                            {% else %}
+                                <p>Review the affected component and implement appropriate security controls.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-vuln">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>No Vulnerabilities Detected</h3>
+                        <p>The scan did not identify any security issues with the target URL.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="actions">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> New Scan
+                </a>
+                <a href="{{ url_for('history') }}" class="btn btn-secondary">
+                    <i class="fas fa-history"></i> Scan History
+                </a>
+                <button class="btn btn-tertiary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print Report
+                </button>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 AI Vulnerability Scanner | For Educational Purposes Only</p>
+        </footer>
+    </div>
+</body>
+</html>
